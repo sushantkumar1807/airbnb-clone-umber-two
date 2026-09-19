@@ -48,10 +48,12 @@ Built for the **Playpower Labs Senior Software Engineer Assessment**.
 │   │   └── listing.test.js # FAANG integrity verification suite
 │   ├── App.jsx           # Main listing page orchestration
 │   └── main.jsx          # React 18 entry point
-├── architecture_design.md# Multi-region distributed architecture spec
+├── architecture_design.md# Frontend system design & production scaling blueprint
 ├── architecture_diagram.png # Architecture diagram (high-res raster)
 ├── architecture_diagram.svg # Architecture diagram (vector source)
-├── prompts_sequence.md   # Chronological AI prompts sequence
+├── prompts_sequence.md   # Complete 11-step master prompts sequence for 100% reproduction
+├── PLAYPOWER_ASSESSMENT_SUBMISSION.md # Full assessment submission dossier
+├── SUBMISSION_DOCUMENTATION.md # Comprehensive engineering documentation
 ├── index.html            # Vite HTML shell
 ├── package.json          # Project dependencies and npm scripts
 └── vite.config.js        # Vite configuration
@@ -101,5 +103,7 @@ npm run build
    - Interactive dual-month calendar with pre-selected dates (Oct 18 – 23, 2026) and "Clear dates" toggle.
 4. **WebP Optimization Pipeline**:
    - All 51 property and stay photos converted to high-definition WebP, saving **26.1% bandwidth** with zero 404s.
-5. **Production Architecture Design**:
-   - Includes [`architecture_design.md`](./architecture_design.md) detailing multi-region active-active deployment, sub-50ms reads via Redis Edge cache, and idempotent distributed reservation locking.
+5. **Frontend Architecture & Production Scaling Design**:
+   - Includes [`architecture_design.md`](./architecture_design.md) detailing the React 18 component hierarchy, unidirectional state flow, modal state machine, and the conceptual multi-region production scaling blueprint.
+6. **Master Prompts Sequence**:
+   - Includes [`prompts_sequence.md`](./prompts_sequence.md) providing the complete 11-step master prompt sequence for 100% clone reproduction.
