@@ -23,8 +23,7 @@ pnpm-debug.log*
 # Local env files
 .env*.local
 
-# Assessment & AI workflow artifacts (ignored from git as requested)
-.agents/
+# Assessment & AI workflow artifacts (extra and scripts ignored)
 extra/
 scripts/
 *.zip
