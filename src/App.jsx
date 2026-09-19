@@ -46,11 +46,53 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('photos');
 
   // Overlays State
-  const [isPhotoTourOpen, setIsPhotoTourOpen] = useState(false);
+  const [isPhotoTourOpen, setIsPhotoTourOpen] = useState(() => {
+    try {
+      return new URLSearchParams(window.location.search).get('modal') === 'PHOTO_TOUR_SCROLLABLE';
+    } catch {
+      return false;
+    }
+  });
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [isAmenitiesModalOpen, setIsAmenitiesModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
+  // Sync photo tour modal state with browser URL (?modal=PHOTO_TOUR_SCROLLABLE)
+  useEffect(() => {
+    const handlePopState = () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        setIsPhotoTourOpen(params.get('modal') === 'PHOTO_TOUR_SCROLLABLE');
+      } catch {
+        // Ignore
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleOpenPhotoTour = () => {
+    setIsPhotoTourOpen(true);
+    try {
+      const url = new URL(window.location);
+      url.searchParams.set('modal', 'PHOTO_TOUR_SCROLLABLE');
+      window.history.pushState({}, '', url);
+    } catch {
+      // Ignore
+    }
+  };
+
+  const handleClosePhotoTour = () => {
+    setIsPhotoTourOpen(false);
+    try {
+      const url = new URL(window.location);
+      url.searchParams.delete('modal');
+      window.history.pushState({}, '', url);
+    } catch {
+      // Ignore
+    }
+  };
 
   // Scroll spy & Sticky Header visibility
   useEffect(() => {
@@ -161,7 +203,7 @@ export default function App() {
 
           <GalleryGrid
             onPhotoClick={handleOpenLightbox}
-            onShowAllPhotos={() => setIsPhotoTourOpen(true)}
+            onShowAllPhotos={handleOpenPhotoTour}
           />
 
           <div className="_lhKJir">
@@ -196,9 +238,9 @@ export default function App() {
       {/* Full-Screen Overlays */}
       <PhotoTourModal
         isOpen={isPhotoTourOpen}
-        onClose={() => setIsPhotoTourOpen(false)}
+        onClose={handleClosePhotoTour}
         onPhotoClick={(idx) => {
-          setIsPhotoTourOpen(false);
+          handleClosePhotoTour();
           handleOpenLightbox(idx);
         }}
         onShare={handleShare}
@@ -216,7 +258,7 @@ export default function App() {
         onClose={() => setIsLightboxOpen(false)}
         onGridClick={() => {
           setIsLightboxOpen(false);
-          setIsPhotoTourOpen(true);
+          handleOpenPhotoTour();
         }}
         onPrev={handleLightboxPrev}
         onNext={handleLightboxNext}
