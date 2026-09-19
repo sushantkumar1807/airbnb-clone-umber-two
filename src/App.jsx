@@ -18,6 +18,7 @@ import NearbyStays from './components/nearby/NearbyStays';
 import PhotoTourModal from './components/photo-tour/PhotoTourModal';
 import LightboxModal from './components/lightbox/LightboxModal';
 import AmenitiesModal from './components/amenities/AmenitiesModal';
+import ShareModal from './components/common/ShareModal';
 import Toast from './components/common/Toast';
 import { LISTING } from './data/listingData';
 
@@ -49,6 +50,7 @@ export default function App() {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [isAmenitiesModalOpen, setIsAmenitiesModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   // Scroll spy & Sticky Header visibility
   useEffect(() => {
@@ -106,14 +108,7 @@ export default function App() {
   };
 
   const handleShare = () => {
-    try {
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(window.location.href);
-      }
-    } catch {
-      // Ignore
-    }
-    showToast('Link copied to clipboard');
+    setIsShareModalOpen(true);
   };
 
   const handleReserve = () => {
@@ -139,6 +134,9 @@ export default function App() {
   };
 
   const currentPhoto = LISTING.photos[lightboxIndex] || LISTING.photos[0];
+  const currentCategoryTitle = LISTING.categories?.find((c) => c.key === currentPhoto?.cat)?.title || currentPhoto?.label || 'Photo';
+  const currentPhotoSrc = currentPhoto?.webp || currentPhoto?.remoteSrc || `/assets/photos/photo_${String(lightboxIndex + 1).padStart(2, '0')}_${currentPhoto?.cat || 'living1'}.webp`;
+  const currentFallbackSrc = currentPhoto?.remoteSrc || currentPhoto?.src;
 
   return (
     <>
@@ -173,22 +171,22 @@ export default function App() {
               <Description />
               <SleepingArrangements />
               <Amenities onShowAllAmenities={() => setIsAmenitiesModalOpen(true)} />
-              <CalendarSection onClearDates={() => showToast('Dates cleared')} />
+              <CalendarSection onClearDates={() => {}} />
             </div>
 
             <aside className="_iJTxKe">
               <BookingCard
                 onReserve={handleReserve}
                 onClaimDiscount={handleClaimPromo}
-                onReport={() => showToast('Report listing')}
+                onReport={() => {}}
               />
             </aside>
           </div>
 
           <div className="_SPYgTj" id="wideSections">
-            <Reviews onShowAllReviews={() => showToast('All 19 reviews')} />
+            <Reviews onShowAllReviews={() => {}} />
             <LocationMap />
-            <HostSection onMessageHost={() => showToast('Messaging Mirashya Homes')} />
+            <HostSection onMessageHost={() => {}} />
             <ThingsToKnow />
             <NearbyStays />
           </div>
@@ -205,14 +203,16 @@ export default function App() {
         }}
         onShare={handleShare}
         onSave={handleToggleSave}
+        isSaved={isSaved}
       />
 
       <LightboxModal
         isOpen={isLightboxOpen}
         currentIndex={lightboxIndex}
         totalPhotos={43}
-        categoryName={currentPhoto?.room || currentPhoto?.alt || 'Photo'}
-        currentPhotoSrc={currentPhoto?.url || `/assets/photos/photo_${String(lightboxIndex + 1).padStart(2, '0')}_${currentPhoto?.key || 'living1'}.webp`}
+        categoryName={currentCategoryTitle}
+        currentPhotoSrc={currentPhotoSrc}
+        fallbackSrc={currentFallbackSrc}
         onClose={() => setIsLightboxOpen(false)}
         onGridClick={() => {
           setIsLightboxOpen(false);
@@ -225,6 +225,11 @@ export default function App() {
       <AmenitiesModal
         isOpen={isAmenitiesModalOpen}
         onClose={() => setIsAmenitiesModalOpen(false)}
+      />
+
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
       />
 
       <Toast text={toast.text} visible={toast.visible} />
